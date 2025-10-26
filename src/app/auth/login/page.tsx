@@ -9,12 +9,21 @@ import { useAuth } from "@/contexts/AuthContext";
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  // Redirect when user is authenticated
+  useEffect(() => {
+    if (shouldRedirect && user) {
+      const redirect = searchParams.get('redirect') || '/dashboard';
+      window.location.href = redirect;
+    }
+  }, [shouldRedirect, user, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,11 +54,8 @@ function LoginContent() {
           return;
         }
 
-        // Successful login - redirect after short delay to ensure session is saved
-        const redirect = searchParams.get('redirect') || '/dashboard';
-        setTimeout(() => {
-          window.location.href = redirect;
-        }, 100);
+        // Successful login - trigger redirect via useEffect
+        setShouldRedirect(true);
       }
     } catch (err: any) {
       console.error('Login error:', err);
