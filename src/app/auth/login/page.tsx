@@ -47,7 +47,8 @@ function LoginContent() {
 
         // Successful login - redirect
         const redirect = searchParams.get('redirect') || '/dashboard';
-        router.push(redirect);
+        // Force page reload to ensure auth state is properly set
+        window.location.href = redirect;
       }
     } catch (err: any) {
       console.error('Login error:', err);
