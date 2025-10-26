@@ -108,7 +108,7 @@ function LoginContent() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-black rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+            className="w-full px-4 py-3 border border-black rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none text-gray-900 placeholder:text-gray-400"
             placeholder="ornek@email.com"
           />
         </div>
@@ -124,7 +124,7 @@ function LoginContent() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-black rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+            className="w-full px-4 py-3 border border-black rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none text-gray-900 placeholder:text-gray-400"
             placeholder="••••••••"
           />
         </div>
