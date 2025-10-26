@@ -45,10 +45,11 @@ function LoginContent() {
           return;
         }
 
-        // Successful login - redirect
+        // Successful login - redirect after short delay to ensure session is saved
         const redirect = searchParams.get('redirect') || '/dashboard';
-        // Force page reload to ensure auth state is properly set
-        window.location.href = redirect;
+        setTimeout(() => {
+          window.location.href = redirect;
+        }, 100);
       }
     } catch (err: any) {
       console.error('Login error:', err);
