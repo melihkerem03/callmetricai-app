@@ -19,8 +19,16 @@ function LoginContent() {
 
   // Redirect when user is authenticated
   useEffect(() => {
+    console.log('🔍 Redirect useEffect:', {
+      shouldRedirect,
+      hasUser: !!user,
+      userEmail: user?.email,
+      redirect: searchParams.get('redirect') || '/dashboard'
+    });
+    
     if (shouldRedirect && user) {
       const redirect = searchParams.get('redirect') || '/dashboard';
+      console.log('✅ Redirecting to:', redirect);
       window.location.href = redirect;
     }
   }, [shouldRedirect, user, searchParams]);
@@ -31,10 +39,21 @@ function LoginContent() {
     setError(null);
     setInfo(null);
     
+    console.log('🚀 Login started for:', email);
+    
     try {
       const { data, error: signInError } = await signIn(email, password);
       
+      console.log('📊 SignIn result:', {
+        hasData: !!data,
+        hasUser: !!data?.user,
+        hasError: !!signInError,
+        errorMessage: signInError?.message,
+        emailConfirmed: data?.user?.email_confirmed_at
+      });
+      
       if (signInError) {
+        console.error('❌ SignIn error:', signInError);
         if (signInError.message.includes('Email not confirmed')) {
           setInfo('⚠️ Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu kontrol edin.');
         } else if (signInError.message.includes('Invalid login credentials')) {
@@ -49,16 +68,22 @@ function LoginContent() {
       if (data?.user) {
         // Check if email is confirmed
         if (!data.user.email_confirmed_at) {
+          console.warn('⚠️ Email not confirmed');
           setInfo('⚠️ E-posta adresiniz henüz doğrulanmamış. Lütfen gelen kutunuzu kontrol edin.');
           setIsLoading(false);
           return;
         }
 
+        console.log('✅ Login successful, setting shouldRedirect=true');
         // Successful login - trigger redirect via useEffect
         setShouldRedirect(true);
+      } else {
+        console.error('❌ No user data returned');
+        setError('❌ Giriş başarısız oldu. Lütfen tekrar deneyin.');
+        setIsLoading(false);
       }
     } catch (err: any) {
-      console.error('Login error:', err);
+      console.error('💥 Login exception:', err);
       setError('❌ Bir hata oluştu. Lütfen tekrar deneyin.');
       setIsLoading(false);
     }
