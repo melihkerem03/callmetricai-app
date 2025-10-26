@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import Sidebar from "./Sidebar";
 
 interface DashboardLayoutProps {
@@ -10,33 +11,24 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
+  const { user, loading, signOut } = useAuth();
   const [userEmail, setUserEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Authentication kontrolü
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
-    const email = localStorage.getItem("userEmail");
-
-    if (!isAuthenticated || isAuthenticated !== "true") {
-      // Giriş yapılmamış, login'e yönlendir
+    if (!loading && !user) {
+      // Not authenticated, redirect to login
       router.push("/auth/login");
-    } else {
-      setUserEmail(email || "");
-      setIsLoading(false);
+    } else if (user) {
+      setUserEmail(user.email || "");
     }
-  }, [router]);
+  }, [user, loading, router]);
 
-  const handleLogout = () => {
-    // Logout - localStorage'ı temizle
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userEmail");
-    
-    // Login sayfasına yönlendir
+  const handleLogout = async () => {
+    await signOut();
     router.push("/auth/login");
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0f1117]">
         <div className="text-center">
